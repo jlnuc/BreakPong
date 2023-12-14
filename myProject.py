@@ -1,6 +1,7 @@
 #libraries
 import pygame
 import random
+import pygame.freetype
 
 #Controls
 from pygame.locals import (
@@ -19,6 +20,12 @@ from pygame.locals import (
 #Size
 width = 1280
 height = 500
+
+#Scoreboard
+score1 = 0 #Initialize the score for P1
+score2 = 0 #Initialize the score for P2
+
+
 
 #Classes
 #P1
@@ -80,16 +87,34 @@ class Ball(pygame.sprite.Sprite):
                 (width/2,height/2)
             )
         )
-        self.speed = -3 #Ball X Speed
-        self.reflect = -3 #Ball Y Speed
+        #These variables down here are for changing up the initial direction for more varied gameplay.
+        rng1=random.randrange(0,2) #RNG for the initial X direction.
+        rng2=random.randrange(0,2) #RNG for the initial Y direction.
+        if rng1 == 1:
+            Xinit=-1
+        if rng1 == 0:
+            Xinit=1
+        if rng2 == 1:
+            Yinit=-1
+        if rng2 == 0:
+            Yinit=1
+
+        self.speed = random.randrange(2,6)*Xinit #Ball X Speed with variation
+        self.reflect = random.randrange(2,6)*Yinit #Ball Y Speed with variation
 
     #There may be a slight bug where the ball disappears near the paddle when hitting the roof when I used a random number, couldn't figure it out.    
     def update(self): 
-        self.rect.move_ip(self.speed, self.reflect) #Move the ball using x and y
-        if self.rect.right < 0: #If ball hits right wall delete
-            self.kill()
-        elif self.rect.left > width: #If ball hits left wall delete
-            self.kill()
+        #Globalize the scores so they can be used in here
+        global score1
+        global score2
+
+        self.rect.move_ip(self.speed, self.reflect)#Move the ball using x and y
+        if self.rect.right < 0: #If ball gets off screen to the right reset.
+            self.__init__()
+            score1 +=1
+        if self.rect.left > width: #If ball gets off screen to the left reset.
+            self.__init__()
+            score2 +=1
         if self.rect.top < 0: #If ball hits the top, change the y value to the opposite sign
             self.reflect = -self.reflect
         elif self.rect.bottom > height: #If ball hits the bottom, change the y value to the opposite sign
@@ -143,11 +168,14 @@ while running:
     ball.update() #Update ball to move
 
     screen.fill((0,0,0)) #Make the background black
+    font = pygame.font.SysFont("ariel", 20) #Setting a font
+    scoreboard1 = font.render("P1 = "+str(score1), 1, (255,255,255)) #Displaying score for P1
+    scoreboard2 = font.render("P2 = "+str(score2), 1, (255,255,255)) #Displaying score for P2
+    screen.blit(scoreboard1, (5, 10)) # The scoreboard updates but I can't figure out how
+    screen.blit(scoreboard2, (5, 30)) # to get the score to increase when the ball goes to each x-axis border
 
     for entity in all_sprites:
         screen.blit(entity.surf, entity.rect) #Make every single sprite visible
     
-    
     pygame.display.flip()
     clock.tick(60) #FPS
-
