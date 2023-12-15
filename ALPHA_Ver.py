@@ -1,6 +1,7 @@
 #libraries
 import pygame
 import random
+import pygame.freetype
 
 #Controls
 from pygame.locals import (
@@ -19,6 +20,10 @@ from pygame.locals import (
 #Size
 width = 1280
 height = 500
+
+#Scoreboard
+score1 = 0 #Initialize the score for P1
+score2 = 0 #Initialize the score for P2
 
 #Classes
 #P1
@@ -153,9 +158,13 @@ while running:
     player1.update(pressed_keys) #Player 1 Keys (W and S)
     player2.update(pressed_keys) #Player2 Keys (Up and Down Arrow)
     ball.update() #Update ball to move
-    
 
     screen.fill((0,0,0)) #Make the background black
+    font = pygame.font.SysFont("ariel", 20) #Setting a font
+    scoreboard1 = font.render("P1 = "+str(score1), 1, (255,255,255)) #Displaying score for P1
+    scoreboard2 = font.render("P2 = "+str(score2), 1, (255,255,255)) #Displaying score for P2
+    screen.blit(scoreboard1, (5, 10)) # The scoreboard updates but I can't figure out how
+    screen.blit(scoreboard2, (5, 30)) # to get the score to increase when the ball goes to each x-axis border
 
     for entity in all_sprites:
         screen.blit(entity.surf, entity.rect) #Make every single sprite visible
