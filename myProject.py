@@ -21,13 +21,15 @@ from pygame.locals import (
 width = 1280
 height = 500
 
+x = 0
+y = 1.03
+
 #Scoreboard
 score1 = 0 #Initialize the score for P1
 score2 = 0 #Initialize the score for P2
 
-
-
 #Classes
+
 #P1
 class Player1(pygame.sprite.Sprite):
     def __init__(self):
@@ -125,6 +127,27 @@ class Ball(pygame.sprite.Sprite):
         elif self.rect.colliderect(player2): #If ball hits player2, change the x value
             self.speed = -self.speed
 
+        for i in blocks: #check every single block
+            if self.rect.colliderect(i): #if ball collides with block
+                self.speed = -self.speed #reverse speed
+
+
+#Bricks
+class Block(pygame.sprite.Sprite):
+    def __init__(self):
+        super(Block, self).__init__()
+        self.surf = pygame.Surface((10,20)) #size
+        self.surf.fill((255,255,255)) #Color
+        self.rect = self.surf.get_rect(center = (((width/6)- x), ((height/1.03) - y))) #Positioning
+        #print(self.rect.center) <- Used for checking position
+
+    
+    def update(self):
+        for i in balls: #check the singular ball
+            if self.rect.colliderect(i): #if any blocks collide with the ball
+                self.kill() #delete the block
+
+
 
 #Start Game
 
@@ -137,7 +160,8 @@ player2 = Player2() #Create player2
 ball = Ball() #Create Ball
 
 all_sprites = pygame.sprite.Group() #Create a group for the sprites
-ball = pygame.sprite.Group() #Group the balls when creating them
+balls = pygame.sprite.Group() #Group the balls when creating them
+blocks = pygame.sprite.Group()
 all_sprites.add(player1) #Make player1 Visible
 all_sprites.add(player2) #Make player2 Visible
 
@@ -145,9 +169,50 @@ all_sprites.add(player2) #Make player2 Visible
 ADDBALL = pygame.USEREVENT +1 #AddBall Event
 add_ball = pygame.event.Event(ADDBALL) #Assigning it as an event
 
-
 running = True 
 pygame.event.post(add_ball) #Add a event at the end of the list for the ball
+
+#BRICK SPAWNS
+#For the numbers between each loop, i just got them by testing over and over again.
+
+#Left Row 1
+for i in range(20): #20 bricks
+        new_block = Block() #create brick
+        blocks.add(new_block) #add to group
+        x = 0 #set width as is so width/6
+        y += 25 #increase the height each time
+
+y = -25 #tested
+
+#Left Row 2
+for i in range(23): #23 bricks (slight variation)
+        new_block = Block() #create brick
+        blocks.add(new_block) #add to group
+        x = 15 #move to the left 15 units
+        y += 23 #move up by 23 to reach the top
+
+y = 1.03 #set y back to the bottom
+x = -854 #set up x position for the right side
+
+#Right Row 1
+for i in range(20): #20 bricks
+        new_block = Block() #create brick
+        blocks.add(new_block) #add to group
+        x = -854 #keep this right side x
+        y += 25 #increase the height each time
+
+x = -869 #move it right 15 units
+y = -25 #same as before
+
+#Right Row 2
+for i in range(23): #23 bricks (slight variation)
+        new_block = Block() #create brick
+        blocks.add(new_block) #add to group
+        x = -869 #keep it in the right position
+        y += 23 #move up by 23 to reach the top
+
+all_sprites.add(blocks) #make visible
+
 
 while running:
     for event in pygame.event.get():
@@ -158,14 +223,15 @@ while running:
             running = False
         elif event.type == ADDBALL: #Adding ball event
             new_ball = Ball()
-            ball.add(new_ball)
+            balls.add(new_ball)
             all_sprites.add(new_ball)
-
+                
 
     pressed_keys = pygame.key.get_pressed()
     player1.update(pressed_keys) #Player 1 Keys (W and S)
     player2.update(pressed_keys) #Player2 Keys (Up and Down Arrow)
-    ball.update() #Update ball to move
+    balls.update() #Update ball to move
+    blocks.update() #Update any blocks that are deleting
 
     screen.fill((0,0,0)) #Make the background black
     font = pygame.font.SysFont("ariel", 20) #Setting a font
