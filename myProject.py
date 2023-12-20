@@ -17,6 +17,28 @@ from pygame.locals import (
     QUIT,
 )
 
+#Sounds
+#All sound was taken from pixaby
+
+#initialize mixer
+pygame.mixer.init()
+
+#play background music
+pygame.mixer.music.set_volume(0.3) #volume
+pygame.mixer.music.load("gameMusicLoop.mp3") #music
+pygame.mixer.music.play(loops=-1) #inf loop
+
+#setup sounds
+brickHit = pygame.mixer.Sound("brickHit.mp3")
+ballBounce = pygame.mixer.Sound("ballBounce.mp3")
+pointScore = pygame.mixer.Sound("pointScore.mp3")
+
+# change the volume for all sounds
+brickHit.set_volume(0.3)
+ballBounce.set_volume(0.5)
+pointScore.set_volume(0.5)
+
+
 #Size
 width = 1280
 height = 500
@@ -113,23 +135,49 @@ class Ball(pygame.sprite.Sprite):
         self.rect.move_ip(self.speed, self.reflect)#Move the ball using x and y
         if self.rect.right < 0: #If ball gets off screen to the right reset.
             self.__init__()
-            score1 +=1
+            score1 +=1 #add point
+            pointScore.play() #play sound
         if self.rect.left > width: #If ball gets off screen to the left reset.
             self.__init__()
-            score2 +=1
+            score2 +=1 #add point
+            pointScore.play() #play sound
         if self.rect.top < 0: #If ball hits the top, change the y value to the opposite sign
             self.reflect = -self.reflect
+            if self.speed < 0: #increase speed
+                self.speed -= 0.2
+            else:
+                self.speed += 0.2
+            ballBounce.play()
         elif self.rect.bottom > height: #If ball hits the bottom, change the y value to the opposite sign
             self.reflect = -self.reflect
+            if self.speed < 0: #increase speed
+                self.speed -= 0.2
+            else:
+                self.speed += 0.2
+            ballBounce.play()
         
         if self.rect.colliderect(player1): #If ball hits player1, change the x value
-            self.speed = -self.speed
+            self.speed = -self.speed #increase speed
+            if self.speed < 0:
+                self.speed -= 0.2
+            else:
+                self.speed += 0.2
+            ballBounce.play()
         elif self.rect.colliderect(player2): #If ball hits player2, change the x value
             self.speed = -self.speed
+            if self.speed < 0: #increase speed
+                self.speed -= 0.2
+            else:
+                self.speed += 0.2
+            ballBounce.play()
 
         for i in blocks: #check every single block
             if self.rect.colliderect(i): #if ball collides with block
                 self.speed = -self.speed #reverse speed
+                if self.speed < 0: #increase speed
+                    self.speed -= 0.2
+                else:
+                    self.speed += 0.2
 
 
 #Bricks
@@ -146,6 +194,7 @@ class Block(pygame.sprite.Sprite):
         for i in balls: #check the singular ball
             if self.rect.colliderect(i): #if any blocks collide with the ball
                 self.kill() #delete the block
+                brickHit.play() #play brick hitting sound
 
 
 
