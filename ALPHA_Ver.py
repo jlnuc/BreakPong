@@ -129,7 +129,7 @@ player2 = Player2() #Create player2
 ball = Ball() #Create Ball
 
 all_sprites = pygame.sprite.Group() #Create a group for the sprites
-ball = pygame.sprite.Group() #Group the balls when creating them
+balls = pygame.sprite.Group() #Group the balls when creating them
 all_sprites.add(player1) #Make player1 Visible
 all_sprites.add(player2) #Make player2 Visible
 
@@ -140,6 +140,7 @@ add_ball = pygame.event.Event(ADDBALL) #Assigning it as an event
 
 running = True 
 pygame.event.post(add_ball) #Add a event at the end of the list for the ball
+new_ball = Ball()
 
 while running:
     for event in pygame.event.get():
@@ -149,15 +150,18 @@ while running:
         elif event.type == QUIT: #X Key = Exit
             running = False
         elif event.type == ADDBALL: #Adding ball event
-            new_ball = Ball()
-            ball.add(new_ball)
+            balls.add(new_ball)
             all_sprites.add(new_ball)
-
+            
+    if ball.rect.right < 0 or new_ball.rect.right < 0:
+            score2 = score2 + 1
+    if ball.rect.left > width or new_ball.rect.left > width:
+            score1 = score1 + 1
 
     pressed_keys = pygame.key.get_pressed()
     player1.update(pressed_keys) #Player 1 Keys (W and S)
     player2.update(pressed_keys) #Player2 Keys (Up and Down Arrow)
-    ball.update() #Update ball to move
+    balls.update() #Update ball to move
 
     screen.fill((0,0,0)) #Make the background black
     font = pygame.font.SysFont("ariel", 20) #Setting a font

@@ -86,13 +86,14 @@ all_sprites.add(ball)
 
 running=True
 
-While running:
+while running:
     for event in pygame.event.get():
         if event.type == KEYDOWN:
             if event.key == K_ESCAPE:
                 running=False
         elif event.type == QUIT:
             running=False
+            
     pressed_keys=pygame.key.get_pressed()
     player1.update(pressed_keys)
     player2.update(pressed_keys)

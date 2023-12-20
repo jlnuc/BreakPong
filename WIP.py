@@ -207,7 +207,7 @@ while running:
     pressed_keys = pygame.key.get_pressed()
     player1.update(pressed_keys) #Player 1 Keys (W and S)
     player2.update(pressed_keys) #Player2 Keys (Up and Down Arrow)
-    ball.update() #Update ball to move
+    balls.update() #Update ball to move
     bricks.update() #checking if hit
 
     screen.fill((0,0,0)) #Make the background black
