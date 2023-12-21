@@ -198,10 +198,6 @@ while running:
                 brick.rect.y = 40 + l*40
                 all_sprites.add(brick)
                 bricks.add(brick)
-    if ball.rect.right < 0:
-        score2 = score2 + 1
-    if ball.rect.left > width:
-        score1 = score1 + 1
 
 
     pressed_keys = pygame.key.get_pressed()
@@ -210,6 +206,11 @@ while running:
     balls.update() #Update ball to move
     bricks.update() #checking if hit
 
+    if ball.rect.right < 0:
+        score2 = score2 + 1
+    if ball.rect.left > width:
+        score1 = score1 + 1
+
     screen.fill((0,0,0)) #Make the background black
 
     #Score stuff
@@ -217,8 +218,7 @@ while running:
     text = font.render("P1 Score: " + str(score1), 1, WHITE)
     screen.blit(text, (20, 10))
     text = font.render("P2 Score: " + str(score2), 1, WHITE)
-    screen.blit(text, (650, 10))
-                
+    screen.blit(text, (650, 10))           
     for entity in all_sprites:
         screen.blit(entity.surf, entity.rect) #Make every single sprite visible
     
